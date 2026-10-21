@@ -43,6 +43,7 @@ fn kinds_map_to_their_dialogs() {
         ("lineSegment", DialogKind::Shape),
         ("rectangularGrid", DialogKind::Shape),
         ("polarGrid", DialogKind::Shape),
+        ("spiral", DialogKind::Shape),
         ("shear", DialogKind::Transform),
         ("splitIntoGrid", DialogKind::PathOp),
         ("artboardOptions", DialogKind::ArtboardOptions),
@@ -90,6 +91,7 @@ fn every_dialog_draws() {
         "lineSegment",
         "rectangularGrid",
         "polarGrid",
+        "spiral",
         "rotate",
         "reflect",
         "scale",
@@ -97,7 +99,14 @@ fn every_dialog_draws() {
         "artboardOptions",
     ] {
         open_tool_dialog(&mut app, kind, json!({"x": 5, "y": 5, "index": 0}));
-        assert!(app.ui.dialog.as_ref().is_some_and(|d| d.kind == kind), "{kind}");
+        let dialog = app.ui.dialog.as_ref().filter(|d| d.kind == kind);
+        assert!(dialog.is_some(), "{kind}");
+        if kind == "spiral" {
+            let fields = &dialog.unwrap().fields;
+            assert_eq!(fields["decay"], json!(80.0));
+            assert_eq!(fields["segments"], json!(10));
+            assert_eq!(fields["clockwise"], json!(true));
+        }
         frame(&mut app, Default::default());
     }
     for (kind, fields) in [

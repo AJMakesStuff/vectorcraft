@@ -15,6 +15,14 @@ pub fn open_tool_dialog(app: &mut VectorcraftApp, kind: &str, p: Value) {
     let d = match kind {
         "rectangle" | "ellipse" => Dialog::new(kind, json!({"x": x, "y": y, "alt": alt, "width": "100 pt", "height": "100 pt"})),
         "roundedRectangle" => Dialog::new(kind, json!({"x": x, "y": y, "alt": alt, "width": "100 pt", "height": "100 pt", "radius": "12 pt"})),
+        "spiral" => {
+            let mut fields = match app.session.tool_options_of(kind) {
+                Value::Object(fields) => fields,
+                _ => serde_json::Map::new(),
+            };
+            fields.extend([("x".into(), json!(x)), ("y".into(), json!(y))]);
+            Dialog::new(kind, Value::Object(fields))
+        }
         "polygon" => Dialog::new(kind, json!({"x": x, "y": y, "radius": "50 pt", "sides": app.session.tool_options_of(kind)["sides"]})),
         "star" => {
             Dialog::new(kind, json!({"x": x, "y": y, "radius1": "50 pt", "radius2": "25 pt", "points": app.session.tool_options_of(kind)["points"]}))
