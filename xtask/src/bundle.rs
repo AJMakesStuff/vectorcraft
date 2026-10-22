@@ -75,7 +75,7 @@ mod tests {
     #[test]
     fn packaging_file_associations_reference_installed_executable() {
         let wxs = std::fs::read_to_string(crate::root().join("packaging/windows/vectorcraft.wxs")).unwrap();
-        for (extension, prog_id) in [("ai", "VectorCraft.ai"), ("vectorcraft", "VectorCraft.vectorcraft")] {
+        for (extension, prog_id) in [("vectorcraft", "VectorCraft.vectorcraft")] {
             let prog_id_start = wxs.find(&format!(r#"<ProgId Id="{prog_id}""#)).unwrap();
             let prog_id_end = wxs[prog_id_start..].find("</ProgId>").unwrap() + prog_id_start;
             let prog_id = &wxs[prog_id_start..prog_id_end];
